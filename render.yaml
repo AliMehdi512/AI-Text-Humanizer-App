@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: ai-text-humanizer
+    env: python
+    runtime: python-3.11.9
+    plan: free
+    buildCommand: "pip install --upgrade pip && pip install -r requirements.txt && python -m spacy download en_core_web_sm && python -c 'import nltk; resources=[\"punkt\",\"punkt_tab\",\"wordnet\",\"averaged_perceptron_tagger\",\"averaged_perceptron_tagger_eng\"]; [nltk.download(r, quiet=True) for r in resources]'"
+    startCommand: "streamlit run main.py --server.port=$PORT --server.address=0.0.0.0 --server.headless=true --server.enableCORS=false --server.enableXsrfProtection=true"
+    healthCheckPath: /_stcore/health
+    autoDeploy: true
+    branch: main
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: PORT
+        generateValue: true
+

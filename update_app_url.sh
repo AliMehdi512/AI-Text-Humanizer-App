@@ -1,11 +1,16 @@
 #!/bin/bash
 
-# Script to update Railway URL in landing page
+# Script to update app URL in landing page (Railway, Render, or any deployment)
 
-echo "🔧 Update Railway URL in Landing Page"
-echo "======================================"
+echo "🔧 Update App URL in Landing Page"
+echo "===================================="
 echo ""
-echo "Please enter your Railway app URL (e.g., https://your-app.up.railway.app):"
+echo "Please enter your deployed app URL:"
+echo "Examples:"
+echo "  - Render: https://ai-text-humanizer.onrender.com"
+echo "  - Railway: https://your-app.up.railway.app"
+echo ""
+echo "Enter URL:"
 read railway_url
 
 if [ -z "$railway_url" ]; then
