@@ -360,6 +360,7 @@ function showDashboard() {
 function showUpgrade() {
     // Create upgrade modal
     const modal = document.createElement('div');
+    modal.className = 'upgrade-modal';
     modal.style.cssText = `
         position: fixed;
         inset: 0;
@@ -380,6 +381,8 @@ function showUpgrade() {
             padding: 48px;
             max-width: 1000px;
             width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
             position: relative;
         ">
             <button onclick="this.closest('.upgrade-modal').remove()" style="
@@ -449,7 +452,8 @@ function showHistory() {
 
 // Handle upgrade
 function handleUpgrade(tier) {
-    alert(`Stripe integration coming soon!\nYou selected: ${CONFIG.SUBSCRIPTION_TIERS[tier].name}`);
+    const tierInfo = CONFIG.SUBSCRIPTION_TIERS[tier];
+    alert(`🚀 Payment Integration Setup Required!\n\nYou selected: ${tierInfo.name} ($${tierInfo.price}/month)\n\nTo enable payments, you need to:\n1. Create a Stripe account\n2. Add your Stripe keys to config.js\n3. Set up webhook endpoints\n\nFor now, this is a demo. Contact admin to set up payments.`);
     // TODO: Integrate Stripe Checkout
 }
 
