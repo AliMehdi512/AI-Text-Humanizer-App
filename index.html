@@ -135,6 +135,10 @@
         .nav-links a:hover::after {
             width: 100%;
         }
+        
+        .mobile-menu-toggle {
+            display: none;
+        }
 
         /* Main Container */
         .container {
@@ -544,21 +548,65 @@
         }
 
         /* Responsive */
+        @media (max-width: 1024px) {
+            .nav-links {
+                margin-right: 250px; /* Reduce margin for smaller screens */
+            }
+        }
+        
         @media (max-width: 768px) {
             .nav {
                 padding: 1rem;
+                flex-wrap: wrap;
+                gap: 1rem;
             }
 
             .nav-links {
                 display: none;
             }
             
+            .mobile-menu-toggle {
+                display: block;
+                background: none;
+                border: none;
+                color: var(--text-primary);
+                font-size: 1.5rem;
+                cursor: pointer;
+                order: 3;
+            }
+            
             .user-menu {
-                right: 16px !important;
+                position: static !important;
+                transform: none !important;
+                right: auto !important;
                 gap: 8px !important;
+                margin-left: auto;
+                order: 2;
             }
             
             .usage-badge, .tier-badge {
+                padding: 6px 12px !important;
+                font-size: 12px !important;
+            }
+            
+            .logo {
+                order: 1;
+                flex: 1;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .user-menu {
+                gap: 6px !important;
+                flex-wrap: wrap;
+            }
+            
+            .usage-badge, .tier-badge {
+                padding: 4px 8px !important;
+                font-size: 11px !important;
+            }
+            
+            .user-btn {
                 padding: 6px 12px !important;
                 font-size: 12px !important;
             }
@@ -663,6 +711,9 @@
                 <li><a href="#about">About</a></li>
                 <li><a href="https://github.com/AliMehdi512/AI-Text-Humanizer-App" target="_blank">GitHub</a></li>
             </ul>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
         </nav>
     </header>
 
@@ -1086,6 +1137,29 @@
                 header.style.background = 'rgba(10, 10, 10, 0.95)';
             }
         });
+        
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            const mobileToggle = document.querySelector('.mobile-menu-toggle i');
+            
+            if (navLinks.style.display === 'flex') {
+                navLinks.style.display = 'none';
+                mobileToggle.className = 'fas fa-bars';
+            } else {
+                navLinks.style.display = 'flex';
+                navLinks.style.flexDirection = 'column';
+                navLinks.style.position = 'absolute';
+                navLinks.style.top = '100%';
+                navLinks.style.left = '0';
+                navLinks.style.right = '0';
+                navLinks.style.background = 'rgba(10, 10, 10, 0.98)';
+                navLinks.style.padding = '1rem';
+                navLinks.style.gap = '1rem';
+                navLinks.style.zIndex = '1000';
+                mobileToggle.className = 'fas fa-times';
+            }
+        }
     </script>
     
     <!-- Supabase Client -->
