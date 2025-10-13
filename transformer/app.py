@@ -150,7 +150,12 @@ class AcademicTextHumanizer:
         """
         contraction_map = {
             "n't": " not", "'re": " are", "'s": " is", "'ll": " will",
-            "'ve": " have", "'d": " would", "'m": " am"
+            "'ve": " have", "'d": " would", "'m": " am",
+            # Handle contractions without apostrophes
+            "dont": "do not", "wont": "will not", "cant": "cannot",
+            "shouldnt": "should not", "wouldnt": "would not", "couldnt": "could not",
+            "havent": "have not", "hasnt": "has not", "hadnt": "had not",
+            "isnt": "is not", "arent": "are not", "wasnt": "was not", "werent": "were not"
         }
         try:
             tokens = word_tokenize(sentence)
@@ -161,6 +166,14 @@ class AcademicTextHumanizer:
                 for contraction, expansion in contraction_map.items():
                     if contraction in lower_token and lower_token.endswith(contraction):
                         new_token = lower_token.replace(contraction, expansion)
+                        if token[0].isupper():
+                            new_token = new_token.capitalize()
+                        expanded_tokens.append(new_token)
+                        replaced = True
+                        break
+                    # Handle exact matches for contractions without apostrophes
+                    elif lower_token == contraction:
+                        new_token = expansion
                         if token[0].isupper():
                             new_token = new_token.capitalize()
                         expanded_tokens.append(new_token)
