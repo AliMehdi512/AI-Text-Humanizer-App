@@ -1074,5 +1074,50 @@
             }
         });
     </script>
+    
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Configuration -->
+    <script src="config.js"></script>
+    
+    <!-- Authentication Integration -->
+    <script src="auth-integration.js"></script>
+    
+    <!-- Usage Tracking Integration -->
+    <script>
+        // Wrap the transform function to include usage tracking
+        const originalTransformText = transformText;
+        
+        async function transformText() {
+            // Check if user can transform
+            if (!window.authIntegration.canUserTransform()) {
+                alert(`You've reached your ${window.authIntegration.userTier === 'guest' ? 'free trial' : 'monthly'} limit!\n\nUpgrade your plan to continue transforming text.`);
+                window.authIntegration.showUpgrade();
+                return;
+            }
+            
+            // Call original transform function
+            const startTime = performance.now();
+            await originalTransformText();
+            const endTime = performance.now();
+            const processingTime = (endTime - startTime) / 1000;
+            
+            // Increment usage
+            await window.authIntegration.incrementUsage();
+            
+            // Save transaction (authenticated users only)
+            const inputText = document.getElementById('inputText').value;
+            const outputText = document.getElementById('outputText').value;
+            const transformations = [];
+            
+            if (controls.passive) transformations.push('passive_voice');
+            if (controls.synonym) transformations.push('synonyms');
+            if (controls.contraction) transformations.push('contractions');
+            if (controls.transition) transformations.push('transitions');
+            
+            await window.authIntegration.saveTransaction(inputText, outputText, transformations, processingTime);
+        }
+    </script>
 </body>
 </html>
