@@ -104,9 +104,10 @@
 
         .nav-links {
             display: flex;
-            gap: 2rem;
+            gap: 1.5rem;
             list-style: none;
-            margin-right: 300px; /* Make room for user menu */
+            margin-right: 450px; /* Increased room for user menu */
+            flex-shrink: 0;
         }
 
         .nav-links a {
@@ -138,6 +139,24 @@
         
         .mobile-menu-toggle {
             display: none;
+        }
+        
+        /* User menu styling */
+        .user-menu {
+            white-space: nowrap;
+        }
+        
+        .user-menu .usage-badge,
+        .user-menu .tier-badge {
+            font-size: 0.85rem;
+            padding: 6px 12px;
+            white-space: nowrap;
+        }
+        
+        .user-menu .user-btn {
+            font-size: 0.85rem;
+            padding: 8px 16px;
+            white-space: nowrap;
         }
 
         /* Main Container */
@@ -548,9 +567,15 @@
         }
 
         /* Responsive */
+        @media (max-width: 1200px) {
+            .nav-links {
+                margin-right: 400px; /* Reduce margin for smaller screens */
+            }
+        }
+        
         @media (max-width: 1024px) {
             .nav-links {
-                margin-right: 250px; /* Reduce margin for smaller screens */
+                margin-right: 300px; /* Further reduce margin for tablets */
             }
         }
         
@@ -1151,12 +1176,17 @@
                 navLinks.style.flexDirection = 'column';
                 navLinks.style.position = 'absolute';
                 navLinks.style.top = '100%';
-                navLinks.style.left = '0';
-                navLinks.style.right = '0';
+                navLinks.style.left = '50%';
+                navLinks.style.transform = 'translateX(-50%)';
+                navLinks.style.width = 'auto';
+                navLinks.style.minWidth = '200px';
                 navLinks.style.background = 'rgba(10, 10, 10, 0.98)';
-                navLinks.style.padding = '1rem';
-                navLinks.style.gap = '1rem';
+                navLinks.style.padding = '1.5rem 2rem';
+                navLinks.style.gap = '1.5rem';
                 navLinks.style.zIndex = '1000';
+                navLinks.style.borderRadius = '12px';
+                navLinks.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.3)';
+                navLinks.style.backdropFilter = 'blur(10px)';
                 mobileToggle.className = 'fas fa-times';
             }
         }

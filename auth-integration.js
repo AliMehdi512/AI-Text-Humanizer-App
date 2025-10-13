@@ -170,7 +170,7 @@ function updateAuthUI() {
     
     const userMenu = document.createElement('div');
     userMenu.className = 'user-menu';
-    userMenu.style.cssText = 'position: absolute; right: 32px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 12px; z-index: 100; flex-wrap: wrap;';
+    userMenu.style.cssText = 'position: absolute; right: 16px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 8px; z-index: 100; flex-wrap: wrap; max-width: 400px;';
     
     if (userMode === 'authenticated') {
         const email = currentUser.email;
