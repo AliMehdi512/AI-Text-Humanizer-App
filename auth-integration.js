@@ -44,9 +44,12 @@ async function checkAuthStatus() {
             .from('user_profiles')
             .select('*')
             .eq('id', currentUser.id)
-            .single();
+            .maybeSingle();
         
-        if (profile) {
+        if (error) {
+            console.error('Error fetching user profile:', error);
+            userTier = 'free'; // Default to free tier on error
+        } else if (profile) {
             userTier = profile.subscription_tier;
         } else {
             userTier = 'free';
@@ -83,9 +86,18 @@ async function loadUsageData() {
             .select('*')
             .eq('user_id', currentUser.id)
             .eq('month_year', currentMonth)
-            .single();
+            .maybeSingle();
         
-        if (data) {
+        if (error) {
+            console.error('Error fetching usage data:', error);
+            // Fallback to default usage data
+            usageData = {
+                user_id: currentUser.id,
+                month_year: currentMonth,
+                usage_count: 0,
+                limit: CONFIG.SUBSCRIPTION_TIERS[userTier].limit
+            };
+        } else if (data) {
             usageData = data;
         } else {
             // Create new usage record for this month

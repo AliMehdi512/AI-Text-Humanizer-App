@@ -826,7 +826,7 @@
 
             <!-- Actions -->
             <div class="actions">
-                <button class="btn btn-primary" id="transformBtn" onclick="transformText()">
+                <button class="btn btn-primary" id="transformBtn" onclick="transformTextWithUsageTracking()">
                     <i class="fas fa-magic"></i>
                     Transform Text
                 </button>
@@ -1206,7 +1206,7 @@
         // Wrap the transform function to include usage tracking
         const originalTransformText = transformText;
         
-        async function transformText() {
+        async function transformTextWithUsageTracking() {
             // Check if user can transform
             if (!window.authIntegration.canUserTransform()) {
                 alert(`You've reached your ${window.authIntegration.userTier === 'guest' ? 'free trial' : 'monthly'} limit!\n\nUpgrade your plan to continue transforming text.`);
