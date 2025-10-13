@@ -5,8 +5,8 @@
 // Supabase Configuration
 const CONFIG = {
     SUPABASE: {
-        URL: 'YOUR_SUPABASE_URL', // e.g., 'https://xxxxx.supabase.co'
-        ANON_KEY: 'YOUR_SUPABASE_ANON_KEY' // Your Supabase anon/public key
+        URL: 'https://tuurlnxzqkjzasldymtv.supabase.co', // e.g., 'https://xxxxx.supabase.co'
+        ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1dXJsbnh6cWtqemFzbGR5bXR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAzMDcwNDQsImV4cCI6MjA3NTg4MzA0NH0.4NWDQ1dqd9h7d87wqST05D3PL06fJc581Nd6WyvHsbI' // Your Supabase anon/public key
     },
     
     API: {
