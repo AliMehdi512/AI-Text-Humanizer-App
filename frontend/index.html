@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Text Humanizer Pro | Transform AI Text to Human Writing</title>
+    <meta name="description" content="Professional AI Text Humanizer - Transform AI-generated text into natural, academic-style writing with advanced NLP technology.">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧔🏻‍♂️</text></svg>">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --dark-bg: #0a0a0a;
+            --darker-bg: #050505;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --text-accent: #00f2fe;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            --glow: 0 0 30px rgba(102, 126, 234, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(0, 242, 254, 0.1) 0%, transparent 50%);
+            animation: bgFloat 20s ease-in-out infinite;
+        }
+
+        @keyframes bgFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(1deg); }
+            66% { transform: translateY(10px) rotate(-1deg); }
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-accent);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-gradient);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 8rem 2rem 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #00f2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes textGlow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.2); }
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Main App Card */
+        .app-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(20px);
+            margin-bottom: 2rem;
+        }
+
+        /* Controls */
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .control-group {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .control-group:hover {
+            border-color: var(--text-accent);
+            box-shadow: var(--glow);
+        }
+
+        .control-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .toggle {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle.active {
+            background: var(--accent-gradient);
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .toggle.active::after {
+            transform: translateX(26px);
+        }
+
+        /* Input Areas */
+        .input-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .text-area-container {
+            position: relative;
+        }
+
+        .text-area {
+            width: 100%;
+            min-height: 300px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        .text-area:focus {
+            outline: none;
+            border-color: var(--text-accent);
+            box-shadow: var(--glow);
+        }
+
+        .text-area::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .input-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        /* File Upload */
+        .file-upload {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--card-bg);
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+        }
+
+        .file-label:hover {
+            border-color: var(--text-accent);
+            color: var(--text-accent);
+        }
+
+        /* Action Buttons */
+        .actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: var(--glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 25px 80px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--text-accent);
+            color: var(--text-accent);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: none;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--card-bg);
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid var(--text-accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-gradient);
+            width: 0%;
+            transition: width 0.3s ease;
+            animation: progressGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes progressGlow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Statistics */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: var(--text-accent);
+            transform: translateY(-2px);
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-accent);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Features Grid */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 4rem;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .feature-card:hover::before {
+            left: 100%;
+        }
+
+        .feature-card:hover {
+            border-color: var(--text-accent);
+            transform: translateY(-5px);
+            box-shadow: var(--glow);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .feature-desc {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--darker-bg);
+            border-top: 1px solid var(--border-color);
+            padding: 3rem 2rem 2rem;
+            margin-top: 4rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--text-accent);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .container {
+                padding: 6rem 1rem 2rem;
+            }
+
+            .input-section {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                grid-template-columns: 1fr;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-in {
+            animation: slideIn 0.8s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Success/Error Messages */
+        .message {
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .message.success {
+            background: rgba(0, 242, 254, 0.1);
+            border: 1px solid var(--text-accent);
+            color: var(--text-accent);
+        }
+
+        .message.error {
+            background: rgba(245, 87, 108, 0.1);
+            border: 1px solid #f5576c;
+            color: #f5576c;
+        }
+
+        /* Download Button */
+        .download-btn {
+            background: var(--secondary-gradient);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(245, 87, 108, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">
+                <i class="fas fa-robot"></i>
+                AI Text Humanizer Pro
+            </div>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#api">API</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="https://github.com/AliMehdi512/AI-Text-Humanizer-App" target="_blank">GitHub</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Hero Section -->
+        <section class="hero fade-in">
+            <h1>Transform AI Text to Human Writing</h1>
+            <p>Professional-grade AI Text Humanizer powered by advanced NLP technology. Transform AI-generated content into natural, academic-style writing with enterprise-level precision.</p>
+        </section>
+
+        <!-- Main App -->
+        <div class="app-card fade-in">
+            <!-- Controls -->
+            <div class="controls">
+                <div class="control-group">
+                    <div class="control-label">
+                        <i class="fas fa-voice"></i>
+                        Passive Voice
+                    </div>
+                    <div class="toggle" id="passiveToggle" onclick="toggleControl('passive')"></div>
+                </div>
+                <div class="control-group">
+                    <div class="control-label">
+                        <i class="fas fa-sync-alt"></i>
+                        Synonym Replacement
+                    </div>
+                    <div class="toggle" id="synonymToggle" onclick="toggleControl('synonym')"></div>
+                </div>
+                <div class="control-group">
+                    <div class="control-label">
+                        <i class="fas fa-dice"></i>
+                        Reproducible Results
+                    </div>
+                    <div class="toggle" id="seedToggle" onclick="toggleControl('seed')"></div>
+                </div>
+                <div class="control-group" id="seedInputGroup" style="display: none;">
+                    <div class="control-label">
+                        <i class="fas fa-key"></i>
+                        Random Seed
+                    </div>
+                    <input type="number" id="seedInput" placeholder="42" min="0" max="9999" style="width: 100%; padding: 0.5rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary);">
+                </div>
+            </div>
+
+            <!-- Messages -->
+            <div id="messageContainer"></div>
+
+            <!-- File Upload -->
+            <div class="file-upload">
+                <label for="fileInput" class="file-label">
+                    <i class="fas fa-upload"></i>
+                    Upload .txt file
+                </label>
+                <input type="file" id="fileInput" class="file-input" accept=".txt">
+                <span id="fileName" style="color: var(--text-secondary); margin-left: 1rem;"></span>
+            </div>
+
+            <!-- Input Section -->
+            <div class="input-section">
+                <div class="text-area-container">
+                    <div class="input-label">
+                        <i class="fas fa-edit"></i>
+                        Input Text
+                    </div>
+                    <textarea id="inputText" class="text-area" placeholder="Enter your AI-generated text here...&#10;&#10;Example: I don't think this'll work. It's really bad and won't help anyone."></textarea>
+                </div>
+                <div class="text-area-container">
+                    <div class="input-label">
+                        <i class="fas fa-magic"></i>
+                        Transformed Text
+                    </div>
+                    <textarea id="outputText" class="text-area" placeholder="Transformed text will appear here..." readonly></textarea>
+                </div>
+            </div>
+
+            <!-- Progress -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <span>Transforming your text...</span>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="actions">
+                <button class="btn btn-primary" id="transformBtn" onclick="transformText()">
+                    <i class="fas fa-magic"></i>
+                    Transform Text
+                </button>
+                <button class="btn btn-secondary" onclick="clearAll()">
+                    <i class="fas fa-trash"></i>
+                    Clear All
+                </button>
+                <button class="btn btn-secondary" onclick="copyOutput()" id="copyBtn" style="display: none;">
+                    <i class="fas fa-copy"></i>
+                    Copy Result
+                </button>
+                <a class="download-btn" id="downloadBtn" style="display: none;" download="humanized_text.txt">
+                    <i class="fas fa-download"></i>
+                    Download
+                </a>
+            </div>
+
+            <!-- Statistics -->
+            <div class="stats" id="stats" style="display: none;">
+                <div class="stat-card">
+                    <div class="stat-value" id="originalWords">0</div>
+                    <div class="stat-label">Original Words</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="transformedWords">0</div>
+                    <div class="stat-label">Transformed Words</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="originalSentences">0</div>
+                    <div class="stat-label">Original Sentences</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="transformedSentences">0</div>
+                    <div class="stat-label">Transformed Sentences</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="processingTime">0s</div>
+                    <div class="stat-label">Processing Time</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <section class="features" id="features">
+            <div class="feature-card slide-in">
+                <div class="feature-icon">
+                    <i class="fas fa-expand-arrows-alt"></i>
+                </div>
+                <h3 class="feature-title">Contraction Expansion</h3>
+                <p class="feature-desc">Converts informal contractions to formal language (don't → do not)</p>
+            </div>
+            <div class="feature-card slide-in">
+                <div class="feature-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h3 class="feature-title">Academic Transitions</h3>
+                <p class="feature-desc">Adds professional transition words for better flow and readability</p>
+            </div>
+            <div class="feature-card slide-in">
+                <div class="feature-icon">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                <h3 class="feature-title">Passive Voice</h3>
+                <p class="feature-desc">Converts active voice to passive voice for formal academic tone</p>
+            </div>
+            <div class="feature-card slide-in">
+                <div class="feature-icon">
+                    <i class="fas fa-sync-alt"></i>
+                </div>
+                <h3 class="feature-title">Synonym Replacement</h3>
+                <p class="feature-desc">Intelligent word substitution using semantic similarity analysis</p>
+            </div>
+            <div class="feature-card slide-in">
+                <div class="feature-icon">
+                    <i class="fas fa-download"></i>
+                </div>
+                <h3 class="feature-title">Export Functionality</h3>
+                <p class="feature-desc">Download transformed text as .txt files for further use</p>
+            </div>
+            <div class="feature-card slide-in">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="feature-title">Real-time Analytics</h3>
+                <p class="feature-desc">Track word count, sentence count, and processing statistics</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>Built with ❤️ using advanced NLP technology</p>
+            <p>Powered by spaCy, NLTK, and Sentence Transformers</p>
+            <div class="footer-links">
+                <a href="https://github.com/AliMehdi512/AI-Text-Humanizer-App" target="_blank">GitHub</a>
+                <a href="https://huggingface.co/spaces/Ali578/ai-text-humanizer" target="_blank">API</a>
+                <a href="#about">About</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Configuration
+        const API_BASE_URL = 'https://alimehdi512-ai-text-humanizer-api.hf.space'; // Updated after deployment
+        
+        // State management
+        let controls = {
+            passive: false,
+            synonym: false,
+            seed: false
+        };
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            setupEventListeners();
+        });
+
+        function initializeApp() {
+            // Add fade-in animations to cards
+            const cards = document.querySelectorAll('.feature-card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        }
+
+        function setupEventListeners() {
+            // File upload
+            document.getElementById('fileInput').addEventListener('change', handleFileUpload);
+            
+            // Input text changes
+            document.getElementById('inputText').addEventListener('input', function() {
+                if (this.value.trim()) {
+                    document.getElementById('transformBtn').disabled = false;
+                }
+            });
+        }
+
+        function toggleControl(type) {
+            const toggle = document.getElementById(type + 'Toggle');
+            controls[type] = !controls[type];
+            
+            if (controls[type]) {
+                toggle.classList.add('active');
+            } else {
+                toggle.classList.remove('active');
+            }
+            
+            // Show/hide seed input
+            if (type === 'seed') {
+                const seedGroup = document.getElementById('seedInputGroup');
+                seedGroup.style.display = controls.seed ? 'block' : 'none';
+            }
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file && file.type === 'text/plain') {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('inputText').value = e.target.result;
+                    document.getElementById('fileName').textContent = `📄 ${file.name}`;
+                    showMessage('File loaded successfully!', 'success');
+                };
+                reader.readAsText(file);
+            } else {
+                showMessage('Please select a valid .txt file', 'error');
+            }
+        }
+
+        async function transformText() {
+            const inputText = document.getElementById('inputText').value.trim();
+            
+            if (!inputText) {
+                showMessage('Please enter some text to transform', 'error');
+                return;
+            }
+
+            // Show loading
+            showLoading(true);
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/transform`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text: inputText,
+                        use_passive: controls.passive,
+                        use_synonyms: controls.synonym,
+                        seed: controls.seed ? parseInt(document.getElementById('seedInput').value) || 42 : null
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Update output
+                    document.getElementById('outputText').value = data.transformed_text;
+                    
+                    // Update statistics
+                    updateStats(data);
+                    
+                    // Show action buttons
+                    document.getElementById('copyBtn').style.display = 'inline-flex';
+                    document.getElementById('downloadBtn').style.display = 'inline-flex';
+                    
+                    // Update download link
+                    updateDownloadLink(data.transformed_text);
+                    
+                    showMessage('Text transformed successfully!', 'success');
+                } else {
+                    throw new Error(data.message || 'Transformation failed');
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage(`Error: ${error.message}`, 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function updateStats(data) {
+            document.getElementById('originalWords').textContent = data.original_word_count;
+            document.getElementById('transformedWords').textContent = data.transformed_word_count;
+            document.getElementById('originalSentences').textContent = data.original_sentence_count;
+            document.getElementById('transformedSentences').textContent = data.transformed_sentence_count;
+            document.getElementById('processingTime').textContent = `${data.processing_time.toFixed(2)}s`;
+            
+            document.getElementById('stats').style.display = 'grid';
+        }
+
+        function updateDownloadLink(text) {
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            document.getElementById('downloadBtn').href = url;
+        }
+
+        function showLoading(show) {
+            const loading = document.getElementById('loading');
+            const transformBtn = document.getElementById('transformBtn');
+            
+            if (show) {
+                loading.style.display = 'flex';
+                transformBtn.disabled = true;
+                
+                // Animate progress bar
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += Math.random() * 15;
+                    if (progress > 90) progress = 90;
+                    document.getElementById('progressFill').style.width = progress + '%';
+                    
+                    if (!show) {
+                        clearInterval(interval);
+                    }
+                }, 200);
+            } else {
+                loading.style.display = 'none';
+                transformBtn.disabled = false;
+                document.getElementById('progressFill').style.width = '100%';
+                setTimeout(() => {
+                    document.getElementById('progressFill').style.width = '0%';
+                }, 500);
+            }
+        }
+
+        function showMessage(message, type) {
+            const container = document.getElementById('messageContainer');
+            container.innerHTML = `<div class="message ${type}">${message}</div>`;
+            container.firstChild.style.display = 'block';
+            
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+        function clearAll() {
+            document.getElementById('inputText').value = '';
+            document.getElementById('outputText').value = '';
+            document.getElementById('fileInput').value = '';
+            document.getElementById('fileName').textContent = '';
+            document.getElementById('stats').style.display = 'none';
+            document.getElementById('copyBtn').style.display = 'none';
+            document.getElementById('downloadBtn').style.display = 'none';
+            document.getElementById('messageContainer').innerHTML = '';
+            
+            // Reset controls
+            Object.keys(controls).forEach(key => {
+                controls[key] = false;
+                document.getElementById(key + 'Toggle').classList.remove('active');
+            });
+            document.getElementById('seedInputGroup').style.display = 'none';
+        }
+
+        function copyOutput() {
+            const outputText = document.getElementById('outputText').value;
+            navigator.clipboard.writeText(outputText).then(() => {
+                showMessage('Text copied to clipboard!', 'success');
+            });
+        }
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add scroll effect to header
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(10, 10, 10, 0.98)';
+            } else {
+                header.style.background = 'rgba(10, 10, 10, 0.95)';
+            }
+        });
+    </script>
+</body>
+</html>

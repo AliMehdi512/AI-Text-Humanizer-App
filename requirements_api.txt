@@ -1,0 +1,28 @@
+# Core FastAPI dependencies
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+
+# Core dependencies
+streamlit==1.42.0
+spacy==3.8.4
+nltk==3.9.1
+sentence-transformers==3.4.1
+
+# Transformers and ML backends
+torch==2.6.0
+transformers==4.48.3
+huggingface-hub==0.28.1
+
+# NLP and text processing
+en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl#sha256=1932429db727d4bff3deed6b34cfc05df17794f4a52eeb26cf8928f7c1a0fb85
+
+# Scientific computing
+numpy==2.2.2
+scipy==1.15.1
+scikit-learn==1.6.1
+
+# Utilities
+tqdm==4.67.1
+requests==2.32.3
+click==8.1.8
