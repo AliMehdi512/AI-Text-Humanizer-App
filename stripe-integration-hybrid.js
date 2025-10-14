@@ -77,11 +77,7 @@ window.StripeIntegration = {
                 mode: 'payment',
                 successUrl: `https://alimehdi512.github.io/AI-Text-Humanizer-App/payment-success.html?tier=${tier}&amount=${this.getAmountFromTier(tier)}`,
                 cancelUrl: 'https://alimehdi512.github.io/AI-Text-Humanizer-App/stripe-cancel.html',
-                customerEmail: userEmail,
-                metadata: {
-                    user_id: userId,
-                    tier: tier
-                }
+                customerEmail: userEmail
             });
             
             if (error) {
