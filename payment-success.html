@@ -342,7 +342,7 @@
         // Update user subscription in Supabase
         async function updateUserSubscription(user, tier) {
             try {
-                console.log('🔄 Starting subscription update for user:', userId, 'to tier:', tier);
+                console.log('🔄 Starting subscription update for user:', user.id, 'to tier:', tier);
 
                 // First, check if user profile exists, if not create it
                 const { data: existingProfile, error: checkError } = await supabaseClient
@@ -353,7 +353,7 @@
 
                 if (checkError && checkError.code === 'PGRST116') {
                     // User profile doesn't exist, create it
-                    console.log('📝 Creating user profile for:', userId);
+                    console.log('📝 Creating user profile for:', user.id);
                     const { error: createError } = await supabaseClient
                         .from('user_profiles')
                         .insert({
