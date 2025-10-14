@@ -259,14 +259,10 @@
 
         async function handlePaymentSuccess() {
             try {
-                // Get session ID from URL
+                // Get parameters from URL
                 const urlParams = new URLSearchParams(window.location.search);
-                const sessionId = urlParams.get('session_id');
-
-                if (!sessionId) {
-                    showError('No session ID found');
-                    return;
-                }
+                const tier = urlParams.get('tier');
+                const amount = urlParams.get('amount');
 
                 // Get current user
                 const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
@@ -280,22 +276,78 @@
                     return;
                 }
 
-                // TODO: Verify payment with backend and update subscription
-                // For now, we'll show the success message
+                // Update user's subscription in Supabase
+                if (tier) {
+                    await updateUserSubscription(user.id, tier);
+                }
                 
                 // Hide loading, show content
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('planInfo').style.display = 'block';
                 document.getElementById('buttons').style.display = 'flex';
 
-                // Update plan info (this would come from Stripe/Supabase)
-                document.getElementById('planName').textContent = 'Pro Plan';
-                document.getElementById('planLimit').textContent = '100 transformations per month';
+                // Update plan info based on tier
+                const tierInfo = CONFIG.SUBSCRIPTION_TIERS[tier];
+                if (tierInfo) {
+                    document.getElementById('planName').textContent = tierInfo.name;
+                    document.getElementById('planLimit').textContent = `${tierInfo.limit} transformations per month`;
+                } else {
+                    document.getElementById('planName').textContent = 'Pro Plan';
+                    document.getElementById('planLimit').textContent = '100 transformations per month';
+                }
 
             } catch (error) {
                 console.error('Error:', error);
                 showError('Something went wrong. Please contact support.');
             }
+        }
+
+        // Update user subscription in Supabase
+        async function updateUserSubscription(userId, tier) {
+            try {
+                // Update user's tier in the users table
+                const { error: userError } = await supabaseClient
+                    .from('users')
+                    .update({ 
+                        tier: tier,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', userId);
+
+                if (userError) {
+                    console.error('Error updating user tier:', userError);
+                    return;
+                }
+
+                // Reset usage for the new month
+                const currentMonth = getCurrentMonth();
+                const { error: usageError } = await supabaseClient
+                    .from('usage_limits')
+                    .upsert({
+                        user_id: userId,
+                        month: currentMonth,
+                        tier: tier,
+                        used: 0,
+                        limit: CONFIG.SUBSCRIPTION_TIERS[tier].limit,
+                        updated_at: new Date().toISOString()
+                    });
+
+                if (usageError) {
+                    console.error('Error updating usage limits:', usageError);
+                    return;
+                }
+
+                console.log(`✅ Successfully updated user ${userId} to ${tier} tier`);
+
+            } catch (error) {
+                console.error('Error updating subscription:', error);
+            }
+        }
+
+        // Get current month in YYYY-MM format
+        function getCurrentMonth() {
+            const now = new Date();
+            return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
         }
 
         function showError(message) {
