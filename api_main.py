@@ -84,6 +84,15 @@ class CheckoutResponse(BaseModel):
     checkout_url: str
     session_id: str
 
+class VerifySessionRequest(BaseModel):
+    session_id: str
+
+class VerifySessionResponse(BaseModel):
+    success: bool
+    tier: str
+    user_id: str
+    amount: float
+
 # Global humanizer instance
 humanizer = None
 
@@ -451,6 +460,33 @@ async def handle_successful_payment(session):
     except Exception as e:
         print(f"❌ Error updating subscription: {str(e)}")
         raise
+
+@app.post("/api/verify-session", response_model=VerifySessionResponse)
+async def verify_session(request: VerifySessionRequest):
+    """Verify a Stripe checkout session"""
+    try:
+        # Retrieve the session from Stripe
+        session = stripe.checkout.Session.retrieve(request.session_id)
+        
+        if session.payment_status == 'paid':
+            # Extract metadata
+            user_id = session.client_reference_id or session.metadata.get('user_id')
+            tier = session.metadata.get('tier')
+            amount = session.amount_total / 100  # Convert from cents
+            
+            return VerifySessionResponse(
+                success=True,
+                tier=tier,
+                user_id=user_id,
+                amount=amount
+            )
+        else:
+            raise HTTPException(status_code=400, detail="Payment not completed")
+            
+    except stripe.error.StripeError as e:
+        raise HTTPException(status_code=400, detail=f"Stripe error: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Session verification failed: {str(e)}")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

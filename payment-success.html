@@ -278,6 +278,43 @@
         // Initialize Supabase client
         const supabaseClient = supabase.createClient(CONFIG.SUPABASE.URL, CONFIG.SUPABASE.ANON_KEY);
 
+        // Verify Stripe session and update subscription
+        async function verifyAndUpdateSubscription(sessionId, user) {
+            try {
+                // Verify the session with Stripe
+                const response = await fetch(`${CONFIG.API.BASE_URL}/api/verify-session`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        session_id: sessionId
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.tier) {
+                        // Update subscription in Supabase
+                        const success = await updateUserSubscription(user, data.tier);
+                        if (success) {
+                            showStatus('✅ Payment successful! Your subscription has been upgraded.', 'success');
+                        } else {
+                            showStatus('⚠️ Payment successful, but there was an issue updating your subscription. Please contact support.', 'warning');
+                        }
+                    } else {
+                        showStatus('⚠️ Payment verification failed. Please contact support.', 'error');
+                    }
+                } else {
+                    // Fallback: assume payment was successful and show success message
+                    showStatus('✅ Payment successful! Your subscription will be updated shortly.', 'success');
+                }
+            } catch (error) {
+                console.error('Error verifying payment:', error);
+                showStatus('✅ Payment successful! Your subscription will be updated shortly.', 'success');
+            }
+        }
+
         async function handlePaymentSuccess() {
             try {
                 // Get parameters from URL
@@ -305,9 +342,9 @@
 
                 // Handle different payment flows
                 if (sessionId) {
-                    // Real Stripe payment - webhook should have already updated the subscription
+                    // Real Stripe payment - verify with Stripe and update subscription
                     console.log('🔄 Real Stripe payment detected, session ID:', sessionId);
-                    showStatus('✅ Payment successful! Your subscription has been upgraded.', 'success');
+                    await this.verifyAndUpdateSubscription(sessionId, user);
                 } else if (tier) {
                     // Simulated payment flow (fallback)
                     console.log('🔄 Simulated payment flow, updating subscription to tier:', tier);
