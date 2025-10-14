@@ -275,7 +275,7 @@
                 await new Promise(resolve => setTimeout(resolve, 2000));
 
                 // Redirect to success page with tier information
-                window.location.href = `stripe-success.html?tier=${tier}&amount=${amount}`;
+                window.location.href = `payment-success.html?tier=${tier}&amount=${amount}`;
 
             } catch (error) {
                 console.error('Payment error:', error);

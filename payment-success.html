@@ -185,6 +185,25 @@
             100% { transform: rotate(360deg); }
         }
 
+        .status-message {
+            margin: 20px 0;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .status-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+
+        .status-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
         @media (max-width: 640px) {
             .container {
                 padding: 40px 20px;
@@ -240,6 +259,8 @@
             <div class="spinner"></div>
             <p style="margin-top: 12px; color: #64748b;">Updating your account...</p>
         </div>
+
+        <div id="statusMessage" style="display: none;"></div>
         
         <div class="buttons" id="buttons" style="display: none;">
             <a href="index.html" class="btn btn-primary">
@@ -272,16 +293,27 @@
                 
                 if (userError || !user) {
                     console.error('User not found:', userError);
-                    // Still show success but redirect to login after
+                    showStatus('Please sign in to complete your upgrade.', 'error');
                     setTimeout(() => {
                         window.location.href = 'auth.html?redirect=index.html';
                     }, 3000);
                     return;
                 }
 
+                console.log('✅ User found:', user.id);
+
                 // Update user's subscription in Supabase
                 if (tier) {
-                    await updateUserSubscription(user.id, tier);
+                    console.log('🔄 Updating subscription to tier:', tier);
+                    const success = await updateUserSubscription(user.id, tier);
+                    
+                    if (success) {
+                        showStatus('✅ Your subscription has been successfully updated!', 'success');
+                    } else {
+                        showStatus('⚠️ Payment successful, but there was an issue updating your subscription. Please contact support.', 'error');
+                    }
+                } else {
+                    showStatus('⚠️ Payment successful, but tier information is missing. Please contact support.', 'error');
                 }
                 
                 // Hide loading, show content
@@ -301,13 +333,17 @@
 
             } catch (error) {
                 console.error('Error:', error);
-                showError('Something went wrong. Please contact support.');
+                showStatus('Something went wrong. Please contact support.', 'error');
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('buttons').style.display = 'flex';
             }
         }
 
         // Update user subscription in Supabase
         async function updateUserSubscription(userId, tier) {
             try {
+                console.log('🔄 Starting subscription update for user:', userId, 'to tier:', tier);
+
                 // Update user's tier in the users table
                 const { error: userError } = await supabaseClient
                     .from('users')
@@ -318,12 +354,16 @@
                     .eq('id', userId);
 
                 if (userError) {
-                    console.error('Error updating user tier:', userError);
-                    return;
+                    console.error('❌ Error updating user tier:', userError);
+                    return false;
                 }
+
+                console.log('✅ User tier updated successfully');
 
                 // Reset usage for the new month
                 const currentMonth = getCurrentMonth();
+                const tierInfo = CONFIG.SUBSCRIPTION_TIERS[tier];
+                
                 const { error: usageError } = await supabaseClient
                     .from('usage_limits')
                     .upsert({
@@ -331,19 +371,21 @@
                         month: currentMonth,
                         tier: tier,
                         used: 0,
-                        limit: CONFIG.SUBSCRIPTION_TIERS[tier].limit,
+                        limit: tierInfo.limit,
                         updated_at: new Date().toISOString()
                     });
 
                 if (usageError) {
-                    console.error('Error updating usage limits:', usageError);
-                    return;
+                    console.error('❌ Error updating usage limits:', usageError);
+                    return false;
                 }
 
-                console.log(`✅ Successfully updated user ${userId} to ${tier} tier`);
+                console.log(`✅ Successfully updated user ${userId} to ${tier} tier with limit ${tierInfo.limit}`);
+                return true;
 
             } catch (error) {
-                console.error('Error updating subscription:', error);
+                console.error('❌ Error updating subscription:', error);
+                return false;
             }
         }
 
@@ -353,18 +395,15 @@
             return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
         }
 
-        function showError(message) {
-            document.getElementById('loading').innerHTML = `
-                <div style="color: #ef4444;">
-                    <i class="fas fa-exclamation-circle" style="font-size: 40px;"></i>
-                    <p style="margin-top: 12px;">${message}</p>
-                </div>
-            `;
-            document.getElementById('buttons').style.display = 'flex';
+        // Show status message
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.textContent = message;
+            statusDiv.className = `status-message status-${type}`;
+            statusDiv.style.display = 'block';
         }
 
         async function openBillingPortal() {
-            // Redirect to Stripe customer portal
             alert('Billing portal integration coming soon!\n\nYou can manage your subscription in your Stripe dashboard.');
         }
 
@@ -373,4 +412,3 @@
     </script>
 </body>
 </html>
-

@@ -45,7 +45,7 @@ const CONFIG = {
         // ⚠️ NOTE: SECRET_KEY should NEVER be in frontend code! It belongs in backend only.
         PRO_PRICE_ID: 'price_1SHxvL6GvTaf3o2C6d6x3yUu', // Lookup key or Price ID from your Stripe product
         PRO_PLUS_PRICE_ID: 'price_1SHxwX6GvTaf3o2COkiBHVz9', // Lookup key or Price ID from your Stripe product
-        CHECKOUT_SUCCESS_URL: window.location.origin + '/AI-Text-Humanizer-App/stripe-success.html',
+        CHECKOUT_SUCCESS_URL: window.location.origin + '/AI-Text-Humanizer-App/payment-success.html',
         CHECKOUT_CANCEL_URL: window.location.origin + '/AI-Text-Humanizer-App/stripe-cancel.html'
     }
 };
