@@ -305,7 +305,7 @@
                 // Update user's subscription in Supabase
                 if (tier) {
                     console.log('🔄 Updating subscription to tier:', tier);
-                    const success = await updateUserSubscription(user.id, tier);
+                    const success = await updateUserSubscription(user, tier);
                     
                     if (success) {
                         showStatus('✅ Your subscription has been successfully updated!', 'success');
@@ -340,7 +340,7 @@
         }
 
         // Update user subscription in Supabase
-        async function updateUserSubscription(userId, tier) {
+        async function updateUserSubscription(user, tier) {
             try {
                 console.log('🔄 Starting subscription update for user:', userId, 'to tier:', tier);
 
@@ -348,8 +348,8 @@
                 const { data: existingProfile, error: checkError } = await supabaseClient
                     .from('user_profiles')
                     .select('id')
-                    .eq('id', userId)
-                    .single();
+                    .eq('id', user.id)
+                    .maybeSingle();
 
                 if (checkError && checkError.code === 'PGRST116') {
                     // User profile doesn't exist, create it
@@ -357,7 +357,7 @@
                     const { error: createError } = await supabaseClient
                         .from('user_profiles')
                         .insert({
-                            id: userId,
+                            id: user.id,
                             email: user.email,
                             full_name: user.user_metadata?.full_name || '',
                             subscription_tier: tier
@@ -380,7 +380,7 @@
                             subscription_tier: tier,
                             updated_at: new Date().toISOString()
                         })
-                        .eq('id', userId);
+                        .eq('id', user.id);
 
                     if (userError) {
                         console.error('❌ Error updating user tier:', userError);
@@ -396,7 +396,7 @@
                 const { error: usageError } = await supabaseClient
                     .from('usage_limits')
                     .upsert({
-                        user_id: userId,
+                        user_id: user.id,
                         month_year: currentMonth,
                         tries_used: 0,
                         tries_limit: tierInfo.limit,
@@ -408,7 +408,7 @@
                     return false;
                 }
 
-                console.log(`✅ Successfully updated user ${userId} to ${tier} tier with limit ${tierInfo.limit}`);
+                console.log(`✅ Successfully updated user ${user.id} to ${tier} tier with limit ${tierInfo.limit}`);
                 return true;
 
             } catch (error) {
