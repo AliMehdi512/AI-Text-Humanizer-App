@@ -344,9 +344,9 @@
             try {
                 console.log('🔄 Starting subscription update for user:', userId, 'to tier:', tier);
 
-                // Update user's tier in the users table
+                // Update user's tier in the user_profiles table
                 const { error: userError } = await supabaseClient
-                    .from('users')
+                    .from('user_profiles')
                     .update({ 
                         tier: tier,
                         updated_at: new Date().toISOString()
