@@ -451,10 +451,62 @@ function showHistory() {
 }
 
 // Handle upgrade
-function handleUpgrade(tier) {
+async function handleUpgrade(tier) {
     const tierInfo = CONFIG.SUBSCRIPTION_TIERS[tier];
-    alert(`🚀 Payment Integration Setup Required!\n\nYou selected: ${tierInfo.name} ($${tierInfo.price}/month)\n\nTo enable payments, you need to:\n1. Create a Stripe account\n2. Add your Stripe keys to config.js\n3. Set up webhook endpoints\n\nFor now, this is a demo. Contact admin to set up payments.`);
-    // TODO: Integrate Stripe Checkout
+    
+    // Check if tier is free
+    if (tier === 'free') {
+        alert('You are already on the Free plan!');
+        return;
+    }
+    
+    // Get the price ID for this tier
+    const priceId = getPriceIdFromTier(tier);
+    
+    if (!priceId) {
+        alert(`Price ID not configured for ${tierInfo.name} plan.\n\nPlease add the Stripe Price ID to config.js`);
+        return;
+    }
+    
+    // Check if Stripe is loaded
+    if (typeof window.StripeIntegration === 'undefined') {
+        alert('Stripe integration not loaded. Please refresh the page and try again.');
+        return;
+    }
+    
+    // Get current user
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+    
+    if (userError || !user) {
+        alert('Please sign in to upgrade your plan.');
+        window.location.href = 'auth.html?redirect=index.html';
+        return;
+    }
+    
+    try {
+        // Create Stripe checkout session
+        await window.StripeIntegration.createCheckoutSession(
+            priceId,
+            user.id,
+            user.email,
+            tier
+        );
+    } catch (error) {
+        console.error('Upgrade error:', error);
+        alert(`Error processing upgrade: ${error.message}\n\nPlease try again or contact support.`);
+    }
+}
+
+// Get price ID from tier (helper function)
+function getPriceIdFromTier(tier) {
+    switch (tier) {
+        case 'pro':
+            return CONFIG.STRIPE.PRO_PRICE_ID;
+        case 'pro_plus':
+            return CONFIG.STRIPE.PRO_PLUS_PRICE_ID;
+        default:
+            return null;
+    }
 }
 
 // Handle sign out

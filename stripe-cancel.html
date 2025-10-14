@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Cancelled - AI Text Humanizer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 24px;
+            padding: 60px 40px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cancel-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            animation: scaleIn 0.5s ease-out 0.2s both;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .cancel-icon i {
+            font-size: 50px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 32px;
+            color: #1e293b;
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #64748b;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 40px;
+            text-align: left;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .info-box h3 {
+            font-size: 18px;
+            color: #92400e;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-box p {
+            font-size: 15px;
+            color: #78350f;
+            line-height: 1.6;
+        }
+
+        .benefits {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 40px;
+            text-align: left;
+        }
+
+        .benefits h3 {
+            font-size: 20px;
+            color: #1e293b;
+            margin-bottom: 20px;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: start;
+            gap: 12px;
+            margin-bottom: 16px;
+            font-size: 15px;
+            color: #475569;
+        }
+
+        .benefit-item i {
+            color: #667eea;
+            font-size: 18px;
+            margin-top: 2px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 40px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .subtitle {
+                font-size: 16px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="cancel-icon">
+            <i class="fas fa-exclamation"></i>
+        </div>
+        
+        <h1>Payment Cancelled</h1>
+        <p class="subtitle">No worries! Your payment was cancelled and no charges were made to your account.</p>
+        
+        <div class="info-box">
+            <h3><i class="fas fa-info-circle"></i> What happened?</h3>
+            <p>You decided not to complete the payment process. That's perfectly fine! You can upgrade your plan anytime when you're ready.</p>
+        </div>
+
+        <div class="benefits">
+            <h3>Why upgrade? Here's what you're missing:</h3>
+            
+            <div class="benefit-item">
+                <i class="fas fa-bolt"></i>
+                <span><strong>More transformations:</strong> Transform up to 500 texts per month instead of just 5</span>
+            </div>
+            
+            <div class="benefit-item">
+                <i class="fas fa-magic"></i>
+                <span><strong>Advanced features:</strong> Access premium humanization algorithms</span>
+            </div>
+            
+            <div class="benefit-item">
+                <i class="fas fa-headset"></i>
+                <span><strong>Priority support:</strong> Get help faster when you need it</span>
+            </div>
+            
+            <div class="benefit-item">
+                <i class="fas fa-code"></i>
+                <span><strong>API access:</strong> Integrate with your own applications</span>
+            </div>
+        </div>
+        
+        <div class="buttons">
+            <a href="index.html" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i>
+                Back to App
+            </a>
+            <a href="index.html#pricing" class="btn btn-secondary">
+                <i class="fas fa-crown"></i>
+                View Plans Again
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Add smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

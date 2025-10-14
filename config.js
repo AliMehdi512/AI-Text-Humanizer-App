@@ -41,9 +41,12 @@ const CONFIG = {
     },
     
     STRIPE: {
-        PUBLISHABLE_KEY: 'YOUR_STRIPE_PUBLISHABLE_KEY',
-        PRO_PRICE_ID: 'price_xxxxx', // Create in Stripe Dashboard
-        PRO_PLUS_PRICE_ID: 'price_xxxxx' // Create in Stripe Dashboard
+        PUBLISHABLE_KEY: 'pk_test_YOUR_PUBLISHABLE_KEY_HERE', // Get from Stripe Dashboard -> Developers -> API Keys
+        // ⚠️ NOTE: SECRET_KEY should NEVER be in frontend code! It belongs in backend only.
+        PRO_PRICE_ID: 'price_pro_monthly', // Lookup key or Price ID from your Stripe product
+        PRO_PLUS_PRICE_ID: 'price_pro_plus_monthly', // Lookup key or Price ID from your Stripe product
+        CHECKOUT_SUCCESS_URL: window.location.origin + '/AI-Text-Humanizer-App/stripe-success.html',
+        CHECKOUT_CANCEL_URL: window.location.origin + '/AI-Text-Humanizer-App/stripe-cancel.html'
     }
 };
 
