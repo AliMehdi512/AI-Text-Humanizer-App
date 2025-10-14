@@ -401,7 +401,7 @@
                         tries_used: 0,
                         tries_limit: tierInfo.limit,
                         updated_at: new Date().toISOString()
-                    });
+                    }, { onConflict: 'user_id,month_year' });
 
                 if (usageError) {
                     console.error('❌ Error updating usage limits:', usageError);
