@@ -1,4 +1,4 @@
-FROM python:3.13.5-slim
+FROM python:3.11-slim
 
 WORKDIR /app
 
@@ -8,13 +8,22 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt ./
-COPY src/ ./src/
+# Copy requirements and install dependencies
+COPY requirements_api.txt ./
+RUN pip install --no-cache-dir -r requirements_api.txt
 
-RUN pip3 install -r requirements.txt
+# Download NLTK resources
+RUN python -c "import nltk; nltk.download('punkt'); nltk.download('averaged_perceptron_tagger'); nltk.download('punkt_tab'); nltk.download('wordnet'); nltk.download('averaged_perceptron_tagger_eng')"
 
-EXPOSE 8501
+# Copy application files
+COPY . /app
 
-HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
+# Create user for security
+RUN useradd -m -u 1000 user && chown -R user:user /app
+USER user
 
-ENTRYPOINT ["streamlit", "run", "src/streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+EXPOSE 7860
+
+HEALTHCHECK CMD curl --fail http://localhost:7860/health
+
+CMD ["python", "app_api.py"]
