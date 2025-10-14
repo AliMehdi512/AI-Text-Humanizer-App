@@ -282,10 +282,11 @@
             try {
                 // Get parameters from URL
                 const urlParams = new URLSearchParams(window.location.search);
+                const sessionId = urlParams.get('session_id');
                 const tier = urlParams.get('tier');
                 const amount = urlParams.get('amount');
 
-                console.log('🔍 Debug - URL params:', { tier, amount });
+                console.log('🔍 Debug - URL params:', { sessionId, tier, amount });
                 console.log('🔍 Debug - Full URL:', window.location.href);
 
                 // Get current user
@@ -302,9 +303,14 @@
 
                 console.log('✅ User found:', user.id);
 
-                // Update user's subscription in Supabase
-                if (tier) {
-                    console.log('🔄 Updating subscription to tier:', tier);
+                // Handle different payment flows
+                if (sessionId) {
+                    // Real Stripe payment - webhook should have already updated the subscription
+                    console.log('🔄 Real Stripe payment detected, session ID:', sessionId);
+                    showStatus('✅ Payment successful! Your subscription has been upgraded.', 'success');
+                } else if (tier) {
+                    // Simulated payment flow (fallback)
+                    console.log('🔄 Simulated payment flow, updating subscription to tier:', tier);
                     const success = await updateUserSubscription(user, tier);
                     
                     if (success) {

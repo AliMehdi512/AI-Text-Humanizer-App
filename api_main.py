@@ -3,7 +3,7 @@ AI Text Humanizer - FastAPI Backend
 Modern REST API for the AI Text Humanizer application
 """
 
-from fastapi import FastAPI, HTTPException, UploadFile, File, Form
+from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
@@ -11,12 +11,21 @@ from typing import Optional
 import uvicorn
 import tempfile
 import os
+import stripe
+import json
+from datetime import datetime
 
 # Import our transformer
 from transformer.app import AcademicTextHumanizer, load_spacy_model, download_nltk_resources
 
 # Download NLTK resources on startup
 download_nltk_resources()
+
+# Initialize Stripe
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_SERVICE_ROLE = os.getenv("SUPABASE_SERVICE_ROLE")
 
 app = FastAPI(
     title="AI Text Humanizer API",
@@ -63,6 +72,17 @@ class HealthResponse(BaseModel):
     status: str
     message: str
     version: str
+
+class CheckoutRequest(BaseModel):
+    price_id: str
+    user_id: str
+    user_email: str
+    tier: str
+
+class CheckoutResponse(BaseModel):
+    success: bool
+    checkout_url: str
+    session_id: str
 
 # Global humanizer instance
 humanizer = None
@@ -280,6 +300,157 @@ async def get_stats():
             "Sentence Transformers 3.4.1"
         ]
     }
+
+@app.post("/api/create-checkout-session", response_model=CheckoutResponse)
+async def create_checkout_session(request: CheckoutRequest):
+    """Create a Stripe Checkout session"""
+    try:
+        # Create checkout session
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[{
+                'price': request.price_id,
+                'quantity': 1,
+            }],
+            mode='payment',
+            success_url=f"https://alimehdi512.github.io/AI-Text-Humanizer-App/payment-success.html?session_id={{CHECKOUT_SESSION_ID}}",
+            cancel_url="https://alimehdi512.github.io/AI-Text-Humanizer-App/stripe-cancel.html",
+            metadata={
+                'user_id': request.user_id,
+                'user_email': request.user_email,
+                'tier': request.tier
+            }
+        )
+        
+        return CheckoutResponse(
+            success=True,
+            checkout_url=checkout_session.url,
+            session_id=checkout_session.id
+        )
+        
+    except stripe.error.StripeError as e:
+        raise HTTPException(status_code=400, detail=f"Stripe error: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to create checkout session: {str(e)}")
+
+@app.post("/api/stripe-webhook")
+async def stripe_webhook(request: Request):
+    """Handle Stripe webhook events"""
+    try:
+        payload = await request.body()
+        sig_header = request.headers.get('stripe-signature')
+        
+        if not STRIPE_WEBHOOK_SECRET:
+            raise HTTPException(status_code=500, detail="Webhook secret not configured")
+        
+        # Verify webhook signature
+        try:
+            event = stripe.Webhook.construct_event(
+                payload, sig_header, STRIPE_WEBHOOK_SECRET
+            )
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Invalid payload")
+        except stripe.error.SignatureVerificationError:
+            raise HTTPException(status_code=400, detail="Invalid signature")
+        
+        # Handle the event
+        if event['type'] == 'checkout.session.completed':
+            session = event['data']['object']
+            await handle_successful_payment(session)
+        
+        return JSONResponse(content={"status": "success"})
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Webhook error: {str(e)}")
+
+async def handle_successful_payment(session):
+    """Update user subscription in Supabase after successful payment"""
+    try:
+        import requests
+        
+        user_id = session['metadata']['user_id']
+        user_email = session['metadata']['user_email']
+        tier = session['metadata']['tier']
+        
+        # Get current month
+        current_month = datetime.now().strftime('%Y-%m')
+        
+        # Update user profile
+        profile_data = {
+            'id': user_id,
+            'email': user_email,
+            'subscription_tier': tier,
+            'updated_at': datetime.now().isoformat()
+        }
+        
+        # Check if user profile exists
+        profile_response = requests.get(
+            f"{SUPABASE_URL}/rest/v1/user_profiles",
+            params={'id': f'eq.{user_id}'},
+            headers={
+                'apikey': SUPABASE_SERVICE_ROLE,
+                'Authorization': f'Bearer {SUPABASE_SERVICE_ROLE}',
+                'Content-Type': 'application/json'
+            }
+        )
+        
+        if profile_response.status_code == 200 and profile_response.json():
+            # Update existing profile
+            requests.patch(
+                f"{SUPABASE_URL}/rest/v1/user_profiles",
+                params={'id': f'eq.{user_id}'},
+                json={'subscription_tier': tier, 'updated_at': datetime.now().isoformat()},
+                headers={
+                    'apikey': SUPABASE_SERVICE_ROLE,
+                    'Authorization': f'Bearer {SUPABASE_SERVICE_ROLE}',
+                    'Content-Type': 'application/json'
+                }
+            )
+        else:
+            # Create new profile
+            requests.post(
+                f"{SUPABASE_URL}/rest/v1/user_profiles",
+                json=profile_data,
+                headers={
+                    'apikey': SUPABASE_SERVICE_ROLE,
+                    'Authorization': f'Bearer {SUPABASE_SERVICE_ROLE}',
+                    'Content-Type': 'application/json'
+                }
+            )
+        
+        # Update usage limits
+        tier_limits = {
+            'free': 5,
+            'pro': 100,
+            'pro_plus': 500
+        }
+        
+        usage_data = {
+            'user_id': user_id,
+            'month_year': current_month,
+            'tries_used': 0,
+            'tries_limit': tier_limits.get(tier, 5),
+            'updated_at': datetime.now().isoformat()
+        }
+        
+        requests.post(
+            f"{SUPABASE_URL}/rest/v1/usage_limits",
+            json=usage_data,
+            headers={
+                'apikey': SUPABASE_SERVICE_ROLE,
+                'Authorization': f'Bearer {SUPABASE_SERVICE_ROLE}',
+                'Content-Type': 'application/json',
+                'Prefer': 'resolution=merge-duplicates'
+            }
+        )
+        
+        print(f"✅ Updated subscription for user {user_id} to tier {tier}")
+        
+    except Exception as e:
+        print(f"❌ Error updating subscription: {str(e)}")
+        raise
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
