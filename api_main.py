@@ -335,7 +335,7 @@ if STRIPE_AVAILABLE:
                     'price': request.price_id,
                     'quantity': 1,
                 }],
-                mode='payment',
+                mode='subscription',
                 success_url=f"https://alimehdi512.github.io/AI-Text-Humanizer-App/payment-success.html?session_id={{CHECKOUT_SESSION_ID}}",
                 cancel_url="https://alimehdi512.github.io/AI-Text-Humanizer-App/stripe-cancel.html",
                 metadata={
