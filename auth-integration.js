@@ -17,8 +17,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
     
+    // Check if Supabase is loaded
+    if (typeof window.supabase === 'undefined') {
+        console.error('Supabase not loaded! Make sure @supabase/supabase-js is included before auth-integration.js');
+        return;
+    }
+    
     // Initialize Supabase
     supabaseClient = window.supabase.createClient(CONFIG.SUPABASE.URL, CONFIG.SUPABASE.ANON_KEY);
+    console.log('✅ Supabase client initialized');
     
     // Check authentication status
     await checkAuthStatus();
@@ -28,6 +35,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // Load usage data
     await loadUsageData();
+    
+    console.log('✅ Auth integration initialized successfully');
 });
 
 // Check if user is authenticated
