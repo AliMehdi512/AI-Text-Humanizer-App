@@ -1,0 +1,18 @@
+[phases.setup]
+nixPkgs = ["python311", "gcc", "g++"]
+
+[phases.install]
+cmds = [
+    "pip install --upgrade pip",
+    "pip install -r requirements_api.txt",
+    "python -m spacy download en_core_web_sm"
+]
+
+[phases.build]
+cmds = [
+    "python -c 'import nltk; resources=[\"punkt\",\"punkt_tab\",\"wordnet\",\"averaged_perceptron_tagger\",\"averaged_perceptron_tagger_eng\"]; [nltk.download(r, quiet=True) for r in resources]'"
+]
+
+[start]
+cmd = "python app_api.py"
+
