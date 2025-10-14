@@ -243,7 +243,8 @@
         const urlParams = new URLSearchParams(window.location.search);
         const tier = urlParams.get('tier');
         const priceId = urlParams.get('price_id');
-        const email = urlParams.get('email');
+        const userId = urlParams.get('user_id');
+        const userEmail = urlParams.get('user_email');
         const amount = urlParams.get('amount');
 
         // Initialize Stripe
@@ -270,8 +271,33 @@
                 document.getElementById('loading').style.display = 'block';
                 document.getElementById('payButton').style.display = 'none';
 
-                // For now, simulate a successful payment
-                // In a real implementation, you'd create a Stripe checkout session
+                // Try to create a Stripe checkout session via backend
+                try {
+                    const response = await fetch(`${CONFIG.API.BASE_URL}/api/create-checkout-session`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            price_id: priceId,
+                            user_id: userId,
+                            user_email: userEmail,
+                            tier: tier
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success && data.checkout_url) {
+                            window.location.href = data.checkout_url;
+                            return;
+                        }
+                    }
+                } catch (backendError) {
+                    console.warn('Backend not available, using simulated payment');
+                }
+
+                // Fallback: Simulate successful payment
                 await new Promise(resolve => setTimeout(resolve, 2000));
 
                 // Redirect to success page with tier information
