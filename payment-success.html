@@ -344,21 +344,50 @@
             try {
                 console.log('🔄 Starting subscription update for user:', userId, 'to tier:', tier);
 
-                // Update user's tier in the user_profiles table
-                const { error: userError } = await supabaseClient
+                // First, check if user profile exists, if not create it
+                const { data: existingProfile, error: checkError } = await supabaseClient
                     .from('user_profiles')
-                    .update({ 
-                        tier: tier,
-                        updated_at: new Date().toISOString()
-                    })
-                    .eq('id', userId);
+                    .select('id')
+                    .eq('id', userId)
+                    .single();
 
-                if (userError) {
-                    console.error('❌ Error updating user tier:', userError);
+                if (checkError && checkError.code === 'PGRST116') {
+                    // User profile doesn't exist, create it
+                    console.log('📝 Creating user profile for:', userId);
+                    const { error: createError } = await supabaseClient
+                        .from('user_profiles')
+                        .insert({
+                            id: userId,
+                            email: user.email,
+                            full_name: user.user_metadata?.full_name || '',
+                            subscription_tier: tier
+                        });
+
+                    if (createError) {
+                        console.error('❌ Error creating user profile:', createError);
+                        return false;
+                    }
+                    console.log('✅ User profile created successfully');
+                } else if (checkError) {
+                    console.error('❌ Error checking user profile:', checkError);
                     return false;
-                }
+                } else {
+                    // User profile exists, update it
+                    console.log('📝 Updating existing user profile');
+                    const { error: userError } = await supabaseClient
+                        .from('user_profiles')
+                        .update({ 
+                            subscription_tier: tier,
+                            updated_at: new Date().toISOString()
+                        })
+                        .eq('id', userId);
 
-                console.log('✅ User tier updated successfully');
+                    if (userError) {
+                        console.error('❌ Error updating user tier:', userError);
+                        return false;
+                    }
+                    console.log('✅ User tier updated successfully');
+                }
 
                 // Reset usage for the new month
                 const currentMonth = getCurrentMonth();
@@ -368,10 +397,9 @@
                     .from('usage_limits')
                     .upsert({
                         user_id: userId,
-                        month: currentMonth,
-                        tier: tier,
-                        used: 0,
-                        limit: tierInfo.limit,
+                        month_year: currentMonth,
+                        tries_used: 0,
+                        tries_limit: tierInfo.limit,
                         updated_at: new Date().toISOString()
                     });
 
