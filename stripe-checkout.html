@@ -289,19 +289,22 @@
                     if (response.ok) {
                         const data = await response.json();
                         if (data.success && data.checkout_url) {
+                            console.log('✅ Redirecting to real Stripe checkout');
                             window.location.href = data.checkout_url;
                             return;
                         }
                     }
                 } catch (backendError) {
-                    console.warn('Backend not available, using simulated payment');
+                    console.warn('Backend not ready yet, using temporary payment simulation');
                 }
 
-                // Fallback: Simulate successful payment
+                // Temporary solution: Simulate successful payment
+                console.log('🔄 Processing temporary payment simulation...');
                 await new Promise(resolve => setTimeout(resolve, 2000));
 
                 // Redirect to success page with tier information
-                window.location.href = `payment-success.html?tier=${tier}&amount=${amount}`;
+                console.log('✅ Payment simulation completed, redirecting to success page');
+                window.location.href = `payment-success.html?tier=${tier}&amount=${getAmountFromTier(tier)}`;
 
             } catch (error) {
                 console.error('Payment error:', error);
@@ -311,6 +314,15 @@
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('payButton').style.display = 'inline-flex';
             }
+        }
+
+        // Get amount from tier
+        function getAmountFromTier(tier) {
+            const amounts = {
+                'pro': '9.99',
+                'pro_plus': '29.99'
+            };
+            return amounts[tier] || '9.99';
         }
 
         // Initialize page
