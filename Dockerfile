@@ -8,6 +8,12 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
+# Set environment variables for better model loading
+ENV HF_HUB_DISABLE_TELEMETRY=1
+ENV HF_HUB_DOWNLOAD_TIMEOUT=60
+ENV TRANSFORMERS_CACHE=/tmp/transformers_cache
+ENV SENTENCE_TRANSFORMERS_HOME=/tmp/sentence_transformers
+
 # Copy requirements and install dependencies
 COPY requirements_api.txt ./
 RUN pip install --no-cache-dir -r requirements_api.txt
@@ -24,6 +30,7 @@ USER user
 
 EXPOSE 7860
 
-HEALTHCHECK CMD curl --fail http://localhost:7860/health
+HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 \
+    CMD curl --fail http://localhost:7860/health
 
-CMD ["python", "app_api.py"]
+CMD ["python", "api_main.py"]

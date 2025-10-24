@@ -81,7 +81,7 @@ class AcademicTextHumanizer:
 
         try:
             self.nlp = load_spacy_model()
-            self.model = SentenceTransformer(model_name)
+            self.model = self._load_sentence_transformer_with_fallback(model_name)
         except Exception as e:
             print(f"Error loading models: {str(e)}")
             raise
@@ -96,6 +96,47 @@ class AcademicTextHumanizer:
             "Moreover,", "Additionally,", "Furthermore,", "Hence,", 
             "Therefore,", "Consequently,", "Nonetheless,", "Nevertheless,"
         ]
+
+    def _load_sentence_transformer_with_fallback(self, model_name):
+        """
+        Load sentence transformer with fallback mechanisms for Hugging Face timeout issues.
+        """
+        import time
+        import requests
+        
+        # List of fallback models (smaller, faster models)
+        fallback_models = [
+            'paraphrase-MiniLM-L6-v2',
+            'all-MiniLM-L6-v2',
+            'all-MiniLM-L12-v2'
+        ]
+        
+        # Try the requested model first
+        models_to_try = [model_name] + [m for m in fallback_models if m != model_name]
+        
+        for i, model in enumerate(models_to_try):
+            try:
+                print(f"🔄 Attempting to load model: {model} (attempt {i+1}/{len(models_to_try)})")
+                
+                # Set a timeout for the model loading
+                import os
+                os.environ['HF_HUB_DOWNLOAD_TIMEOUT'] = '30'  # 30 second timeout
+                
+                # Try to load the model
+                model_instance = SentenceTransformer(model)
+                print(f"✅ Successfully loaded model: {model}")
+                return model_instance
+                
+            except Exception as e:
+                print(f"❌ Failed to load model {model}: {str(e)}")
+                if i < len(models_to_try) - 1:
+                    print(f"🔄 Trying next fallback model...")
+                    time.sleep(2)  # Wait 2 seconds before trying next model
+                else:
+                    print(f"⚠️ All models failed to load. Running without sentence transformer model.")
+                    return None
+        
+        return None
 
     def humanize_text(self, text, use_passive=False, use_synonyms=False):
         """
@@ -325,10 +366,17 @@ class AcademicTextHumanizer:
     def _select_closest_synonym(self, original_word, synonyms):
         """
         Selects the semantically closest synonym using sentence transformers.
+        Falls back to random selection if model is not available.
         """
         try:
             if not synonyms:
                 return None
+            
+            # If model is not available, use simple random selection
+            if self.model is None:
+                print("⚠️ Sentence transformer model not available, using random synonym selection")
+                return random.choice(synonyms)
+            
             original_emb = self.model.encode(original_word, convert_to_tensor=True)
             synonym_embs = self.model.encode(synonyms, convert_to_tensor=True)
             cos_scores = util.cos_sim(original_emb, synonym_embs)[0]
@@ -339,4 +387,7 @@ class AcademicTextHumanizer:
             return None
         except Exception as e:
             print(f"Error in _select_closest_synonym: {str(e)}")
+            # Fallback to random selection
+            if synonyms:
+                return random.choice(synonyms)
             return None
